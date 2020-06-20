@@ -1,7 +1,9 @@
-package nl.minecraft.location;
+package location;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,6 +15,8 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import location.init.ModItemGroups;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +25,7 @@ import java.util.stream.Collectors;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("location")
 public class Location {
+    public static final String MODID = "location";
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
@@ -73,10 +78,30 @@ public class Location {
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
+        public static <T extends IForgeRegistryEntry<T>> T setup(final T entry, final String name) {
+            return setup(entry, new ResourceLocation(Location.MODID, name));
+        }
+
+        public static <T extends IForgeRegistryEntry<T>> T setup(final T entry, final ResourceLocation registryName) {
+            entry.setRegistryName(registryName);
+            return entry;
+        }
+
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
+            LOGGER.debug("Block registry event: {}", blockRegistryEvent);
+        }
+
+        @SubscribeEvent
+        public static void onRegisterItems(RegistryEvent.Register<Item> event) {
+            LOGGER.info("HELLO from Register Items");
+            LOGGER.debug("Item registry event: {}", event);
+
+            event.getRegistry().registerAll(
+                    setup(new Item(new Item.Properties().group(ModItemGroups.MOD_ITEM_GROUP)), "example_item")
+            );
         }
     }
 }
