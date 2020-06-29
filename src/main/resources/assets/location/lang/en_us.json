@@ -1,0 +1,8 @@
+{
+    "key.categories.location" : "Location mod settings",
+    "key.toggle.block": "Hide / Unhide Block info",
+    "key.toggle.overlay": "Hide / Unhide Block Overlay",
+    "key.toggle.terrain": "Hide / Unhide terrain info display",
+    "key.toggle.direction": "Hide / Unhide direction display",
+    "key.toggle.location": "Hide / Unhide location info display"
+}
