@@ -1,5 +1,6 @@
 package nl.minecraft.location;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,6 @@ public class LocationUI extends AbstractGui {
     private static final String[] directions = new String[]{"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 
     private BlockState selectedBlock;
-    private String overlay;
 
     public LocationUI(Minecraft mc) {
         this.mc = mc;
@@ -41,16 +41,15 @@ public class LocationUI extends AbstractGui {
             return;
         }
 
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        FontRenderer fr = mc.fontRenderer;
         ClientPlayerEntity player = mc.player;
-        Entity renderViewEntity = mc.getRenderViewEntity();
+        Entity entity = mc.getRenderViewEntity();
+        MatrixStack matrixStack = event.getMatrixStack();
 
-        if (renderViewEntity == null || player == null) {
+        if (entity == null || player == null) {
             return;
         }
 
-        BlockPos block = new BlockPos(renderViewEntity);
+        BlockPos block = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
         Biome biome = getBiome(block);
 
         String direction = getDirection(player.rotationYaw);
@@ -63,27 +62,13 @@ public class LocationUI extends AbstractGui {
             this.selectedBlock = null;
         }
 
-        if (showOverlay && this.overlay != null) {
-            terrain += " " + overlay;
-            this.overlay = null;
-        }
-
-        if (showDirection) {
-            fr.drawStringWithShadow(direction, 0f, 0f, 0xffffff);
-        }
         if (showLocation) {
-            fr.drawStringWithShadow(location, 15f, 0f, 0xffffff);
+            drawStringWithShadow(matrixStack, direction, 0f, 0f, 0xffffff);
+            drawStringWithShadow(matrixStack, location, 15f, 0f, 0xffffff);
+            if (showTerrain) {
+                drawStringWithShadow(matrixStack, terrain, 0f, 10f, 0xffffff);
+            }
         }
-        if (showTerrain) {
-            fr.drawStringWithShadow(terrain, 0f, 10f, 0xffffff);
-        }
-    }
-
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void onRenderBlockOverlay(RenderBlockOverlayEvent event) {
-        RenderBlockOverlayEvent.OverlayType type = event.getOverlayType();
-        this.overlay = type.name().toLowerCase();
     }
 
     @SubscribeEvent
@@ -104,7 +89,7 @@ public class LocationUI extends AbstractGui {
 
     private Biome getBiome(BlockPos blockPos) {
         if (mc.world != null) {
-            return mc.world.func_226691_t_(blockPos);
+            return mc.world.getBiome(blockPos);
         }
         return Biomes.PLAINS;
     }
@@ -126,6 +111,15 @@ public class LocationUI extends AbstractGui {
             }
         }
         return "";
+    }
+
+    /*
+     * It's not fair, why does Java not get a supported API
+     */
+    private void drawStringWithShadow(MatrixStack matrixStack, String text, float x, float y, int color) {
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        FontRenderer fr = mc.fontRenderer;
+        fr.func_238405_a_(matrixStack, text, x, y, color);
     }
 
 }
