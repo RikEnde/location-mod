@@ -29,7 +29,6 @@ public class LocationUI extends AbstractGui {
     private static final String[] directions = new String[]{"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 
     private BlockState selectedBlock;
-    private String overlay;
 
     public LocationUI(Minecraft mc) {
         this.mc = mc;
@@ -63,27 +62,13 @@ public class LocationUI extends AbstractGui {
             this.selectedBlock = null;
         }
 
-        if (showOverlay && this.overlay != null) {
-            terrain += " " + overlay;
-            this.overlay = null;
-        }
-
-        if (showDirection) {
-            drawStringWithShadow(matrixStack, direction, 0f, 0f, 0xffffff);
-        }
         if (showLocation) {
+            drawStringWithShadow(matrixStack, direction, 0f, 0f, 0xffffff);
             drawStringWithShadow(matrixStack, location, 15f, 0f, 0xffffff);
+            if (showTerrain) {
+                drawStringWithShadow(matrixStack, terrain, 0f, 10f, 0xffffff);
+            }
         }
-        if (showTerrain) {
-            drawStringWithShadow(matrixStack, terrain, 0f, 10f, 0xffffff);
-        }
-    }
-
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void onRenderBlockOverlay(RenderBlockOverlayEvent event) {
-        RenderBlockOverlayEvent.OverlayType type = event.getOverlayType();
-        this.overlay = type.name().toLowerCase();
     }
 
     @SubscribeEvent
