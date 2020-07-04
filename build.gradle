@@ -11,33 +11,20 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-group = 'nl.minecraft'
-version = '1.0-SNAPSHOT'
-archivesBaseName = 'location'
+version = mod_version
+group= "nl.minecraft"
+archivesBaseName = "location-${game_version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'stable', version: '60-1.15'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    mappings channel: 'snapshot', version: forge_mappings
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -49,11 +36,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -66,10 +49,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'location', '--all', '--output', file('src/generated/resources/')
@@ -84,7 +64,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
+    minecraft "net.minecraftforge:forge:${game_version}-${forge_version}"
 }
 
 jar.finalizedBy('reobfJar')
