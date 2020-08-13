@@ -118,7 +118,7 @@ public class LocationUI extends AbstractGui {
     private void drawStringWithShadow(MatrixStack matrixStack, String text, float x, float y, int color) {
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         FontRenderer fr = mc.fontRenderer;
-        fr.func_238405_a_(matrixStack, text, x, y, color);
+        fr.drawStringWithShadow(matrixStack, text, x, y, color);
     }
 
 }
